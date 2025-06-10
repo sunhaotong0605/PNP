@@ -4,7 +4,7 @@ This is the code repository for predicting plant soil probiotics.
 This is the code repository for predicting plant soil probiotics.
 # env
 This is the code repository for predicting plant soil probiotics.
-
+`pip install transformers`
 # data
 This is the code repository for predicting plant soil probiotics.
 
