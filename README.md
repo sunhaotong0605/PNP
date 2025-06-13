@@ -5,7 +5,7 @@ Soil probiotics are indispensable in agro-ecosystem, which enhances crop yield t
 
 ## Schematic Diagram
 <div style="text-align: center;">
-    <img src="img/fig1.jpg" alt="fig1" width="147.9*2" height="217.6*2">
+    <img src="img/fig1.jpg" alt="fig1" width="147.9" height="217.6">
 </div>
 Figure 1. Overview of the proposed method. The genomic sequence of a bacterial sample is divided into segments. Its partial segments are input into a pre-trained foundation model to generate representations, and engineered features are extracted from these segments. The foundation model representation and engineered feature vectors are aligned, and then, the foundation model representations are enhanced by deeply integrating the engineered features. The enhanced representations are fed into the stacked aggregation classifier. The first-level classifier processes each enhanced representation to obtain a score. All scores are aggregated into a vector, which is input into the second-level classifier to output the final label and score.
 
