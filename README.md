@@ -27,6 +27,13 @@ cd SPP_FMRESAC
 pip install -r requirements.txt
 ```
 ## Usage
+#### Foundation model weights.
+Download the weights of [Nucleotide Transformer-50M](https://huggingface.co/InstaDeepAI/nucleotide-transformer-v2-50m-multi-species) to the model_weights/NT_50M/ folder.
+
+Download the weights of [DNABERT-2-117M](https://huggingface.co/zhihan1996/DNABERT-2-117M) to the model_weights/DNABERT2_117M/ folder.
+
+Download the weights of [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8k-base) to the model_weights/EVO_7B/ folder.
+
 #### Prediction for multiple samples.
 ```bash
 python main_m.py -m model_name -i input_file -o output_path
