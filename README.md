@@ -1,7 +1,7 @@
 # Prediction of soil probiotics based on foundation model representation enhancement and stacked aggregation classifier
 
 ## Introduction
-Soil probiotics are indispensable in agro-ecosystem, which enhances crop yield through nutrient solubilization, pathogen suppression, and soil structure improvement. However, reliable prediction methods for soil probiotics remain absent. In this study, we utilize genomic foundation models to generate representations from samples’ sequences, and then, enhance them by deeply integrating domain-specific engineered features. The enhanced representations enable training a powerful classifier for a target task, instead of common parameter fine-tuning. Inspired by the stacking ensemble learning framework, we also design a stacked aggregation classifier. It predicts the lable of a sample with only leveraging partial sequence segments from this sample, effectively addressing the challenges in processing long sequences. The proposed method is applied on prediction of soil probiotics and obtains 97.50% accuracy and 0.9807 AUC value on balanced and imbalanced test sets, respectively. Potential functional genes are revealed from the predicted probiotics, providing biologically insights for more related studies.
+We utilize genomic foundation models to generate representations from samples’ sequences, and then, enhance them by deeply integrating domain-specific engineered features. The enhanced representations enable training a powerful classifier for a target task. We also design a stacked aggregation classifier. It predicts the label of a sample with only leveraging partial sequence segments from this sample, effectively addressing the challenges in processing long sequences. The proposed method is applied on prediction of soil probiotics.
 
 ## Schematic Diagram
 <div style="text-align: center;">
@@ -15,7 +15,7 @@ Figure 1. Overview of the proposed method. The genomic sequence of a bacterial s
 [Download](https://github.com/sunhaotong0605/SPP_FMRESAC/archive/refs/heads/main.zip) this GitHub repository, and extract the contents into a folder.
 
 ### Data Description
-The proposed method requires data in [fasta](https://www.ncbi.nlm.nih.gov/genbank/fastaformat/) format as input. All data used will be made public as a supplementary table after the paper is accepted.
+The proposed method requires data in [FASTA](https://www.ncbi.nlm.nih.gov/genbank/fastaformat/) format as input. All data used will be made public as a supplementary table after the paper is accepted.
 
 ## Install
 ```bash
@@ -27,16 +27,32 @@ cd SPP_FMRESAC
 pip install -r requirements.txt
 ```
 ## Usage
+#### Prediction for multiple samples.
 ```bash
-python main.py -m model_name -i input_file -o output_path
+python main_m.py -m model_name -i input_file -o output_path
 ```
---model_name: A selected foundation model for generating representations and the candidates are "NT_50M", "DNABERT2_117M" or "EVO_7B".
+--model_name: A selected foundation model for generating representations, and the candidates only can be "NT_50M", "DNABERT2_117M" or "EVO_7B".
 
---input_file: An input fasta file.
+--input_file: An input FASTA file.
 
 --output_path: A path for outputting files.
 
-The output files include a representation.pkl (foundation model representations), a feature.pkl (engineered features) and an enhanced_representation.pkl (enhanced representations). The predicted label and score of the target samples are printed.
+The input FASTA file can contain one or multiple samples. For each sample, an output folder named after the sample is generated, containing: a directory of sequence segments, foundation model representations (.pkl), engineered features (.pkl), and enhanced representations (.pkl). The predicted labels and confidence scores are printed to the console.
+
+#### Prediction for a sample after sequence segmentation.
+```bash
+python main_o.py -m model_name -s segment_path -o output_path
+```
+--model_name: A selected foundation model for generating representations, and the candidates only can be "NT_50M", "DNABERT2_117M" or "EVO_7B".
+
+--segment_path: A path of sequence segments.
+
+--output_path: A path for outputting files.
+
+If a sample's sequence has been segmented, sequence segmentation step can be skipped, and existing sequence segments can be directly used for prediction. This script does not support multi-sample prediction. An output folder named after the sample is generated, containing: foundation model representations (.pkl), engineered features (.pkl), and enhanced representations (.pkl). The predicted label and confidence score are printed to the console.
+
+#### notice
+Each prediction involves randomly selecting partial segments from a sample, may result in inconsistent outputs across multiple runs due to differences in the selected segments sets.
 
 ## License
 MIT License. See [LICENSE](LICENSE.txt) for details.
