@@ -1,0 +1,9 @@
+_name_: ProbioticDataset
+dest_path: null
+train_split: train
+val_split: val
+test_split: test
+dataset_name: ''
+batch_size: 32
+max_length: 2500
+mlm: False
