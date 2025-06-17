@@ -23,8 +23,8 @@ class NTEmbedding(BaseEmbedding):
             trust_remote_code=True,
             ignore_mismatched_sizes=ignore_mismatched_sizes
         )
-        print(base_model)
-        logger.info(f"load model from: {pretrained_model_name_or_path}")
+        # print(base_model)
+        # logger.info(f"load model from: {pretrained_model_name_or_path}")
         self.base_embed = base_model.esm
         self.classifier = base_model.classifier
         self.config: PretrainedConfig = base_model.config

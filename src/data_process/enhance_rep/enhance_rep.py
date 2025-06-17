@@ -23,7 +23,7 @@ def enhance_rep(config: DictConfig):
     set_seed(config.enhance_rep.train.seed)
 
     model = utils.config.instantiate(registry.model, config.enhance_rep.model)
-    logger.info(model)
+    # logger.info(model)
 
     # Load the tokenizer and dataset
     dataset = utils.config.instantiate(registry.dataset, config.enhance_rep.dataset, partial=True)
@@ -52,12 +52,6 @@ def enhance_rep(config: DictConfig):
     checkpoint = None
     if config.enhance_rep.train.resume_from_checkpoint is not None:
         checkpoint = config.enhance_rep.train.resume_from_checkpoint
-
-    logger.info(f"load checkpoint from {checkpoint}")
-    if checkpoint is not None:
-        trainer._load_from_checkpoint(checkpoint)
-        logger.info(f'load checkpoint from {checkpoint=} ')
-
      
     # Prediction
     with torch.no_grad():
@@ -108,12 +102,11 @@ def enhance_rep(config: DictConfig):
                 output_pkl_path = os.path.join(pickles_dir, f"{sample['sample_name']}.pkl")
                 with open(output_pkl_path, "wb") as f:
                     pickle.dump(predict_result, f)
-                logger.info(f"{sample['sample_name']} predict result saved to {output_pkl_path}")
+                # logger.info(f"{sample['sample_name']} predict result saved to {output_pkl_path}")
         else:
             logger.info(f"not valid data split name: {config.enhance_rep.dataset.test_split}")
         
         # logger.info("Max GPU memory allocated:", torch.cuda.max_memory_allocated() / (1024 * 1024), "MB")
-        logger.info("Representation enhancement completed.")
 
 
 @hydra.main(config_path="configs", config_name="config.yaml", version_base=None)
@@ -123,12 +116,6 @@ def main(config: OmegaConf):
     # set wandb_mode disabled
     os.environ["WANDB_MODE"] = "disabled"
 
-    if config.cut_seq.output_dir is None:
-        output_dir = os.path.join(os.path.dirname(config.cut_seq.data_path.rstrip("/")))
-        config.enhance_rep.dataset.llm_rep_path = os.path.join(output_dir, f"LLM_Representation/{config.extract_llmr.model._name_}")
-        config.enhance_rep.dataset.ef_path = os.path.join(output_dir, f"Engineered_Features")
-        config.enhance_rep.train.output_dir = os.path.join(output_dir, f"Enhanced_Representation/{config.extract_llmr.model._name_}")
-        config.enhance_rep.train.logging_dir = os.path.join(output_dir, f"Enhanced_Representation/{config.extract_llmr.model._name_}/logs")
     os.makedirs(config.enhance_rep.dataset.llm_rep_path, exist_ok=True)
     os.makedirs(config.enhance_rep.dataset.ef_path, exist_ok=True)
     os.makedirs(config.enhance_rep.train.output_dir, exist_ok=True)

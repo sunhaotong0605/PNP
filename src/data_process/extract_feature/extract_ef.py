@@ -93,25 +93,22 @@ def extract_ef(config: DictConfig):
             for future in tqdm.tqdm(as_completed(futures), total=len(futures)):
                 try:
                     file_name = future.result()
-                    logger.info(f"Processed {file_name} with k={k}")
+                    # logger.info(f"Processed {file_name} with k={k}")
                 except Exception as e:
                     logger.error(f"Error processing file: {futures[future]} - {e}")
-        logger.info(f'Extracted features for {len(file_paths)} files with k={k} and saved to {config.extract_ef.output_path}')
+        # logger.info(f'Extracted features for {len(file_paths)} files with k={k} and saved to {config.extract_ef.output_path}')
 
 @hydra.main(config_path="configs", config_name="config.yaml", version_base=None)
 def main(config: OmegaConf):
     # check if the config is valid
     config = process_config(config)
     
-    if config.extract_ef.data_path is None:
-        raise ValueError("The 'data_path' parameter in 'extract_ef' config must be specified.")
     if config.extract_ef.output_dir is None:
-        config.extract_ef.output_dir = os.path.dirname(config.extract_ef.data_path.rstrip("/"))
-        config.extract_ef.output_path = os.path.join(config.extract_ef.output_dir, "Engineered_Features")
-    
+        raise ValueError("The 'output_path' parameter in config must be specified.")
+
     # if finished, skip
     if os.path.exists(config.extract_ef.output_path) and len(os.listdir(config.extract_ef.output_path)) > 1:
-        logger.info("The 'extract_ef' process has already been completed, skipping...")
+        logger.info("The 'engineered feature extraction' process has already been completed, skipping...")
         return
     
     os.makedirs(config.extract_ef.output_path, exist_ok=True)

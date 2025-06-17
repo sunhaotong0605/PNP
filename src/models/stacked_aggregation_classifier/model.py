@@ -186,8 +186,8 @@ class MLClassModel(object):
         pred_array = np.array(pred_list)
         prob_array = np.array(prob_list)
         metrics_list = []
-        for i in range(10):
-            metrics_list.append(self.compute_metrics(pred_array[i, :], labels, prob_array[i, :, 1]))
+        # for i in range(10):
+        #     metrics_list.append(self.compute_metrics(pred_array[i, :], labels, prob_array[i, :, 1]))
         return metrics_list, np.array(inter_prob1), labels, pred_array, prob_array, names
    
    

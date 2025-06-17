@@ -55,7 +55,7 @@ def ml_predict(config: DictConfig):
     else:
         raise ValueError("test_split is None, please set it in the config file")
     if test_dataset is not None and config.ml_predict.train.do_predict:
-        logger.info("Start predict ...")
+        # logger.info("Start predict ...")
         test_metrics, inter_prob1, ground_truth, test_predict, test_prob, test_names = trainer.test(test_dataset)
         sample_labels = []
         sample_prob = []
@@ -82,18 +82,11 @@ def main(config: OmegaConf):
     # check if the config is valid
     config = process_config(config)
 
-    if config.cut_seq.output_dir is None:
-        output_dir = os.path.join(os.path.dirname(config.cut_seq.data_path.rstrip("/")))
-        config.ml_predict.dataset.dest_path = os.path.join(output_dir, f"/Output/Enhance_Rep_Task/{config.extract_llmr.model._name_}")
-        config.ml_predict.train.output_dir = os.path.join(output_dir, f"Output/Ml_Predict_Task/{config.extract_llmr.model._name_}")
-        config.ml_predict.train.logging_dir = os.path.join(output_dir, f"Output/Ml_Predict_Task/{config.extract_llmr.model._name_}/logs")
     os.makedirs(config.ml_predict.dataset.dest_path, exist_ok=True)
     os.makedirs(config.ml_predict.train.output_dir, exist_ok=True)
     os.makedirs(config.ml_predict.train.logging_dir, exist_ok=True)
     if config.extract_llmr.model._name_ == "NTForClassifier":
         config.ml_predict.train.trained_model_path = os.path.join(config.ml_predict.train.trained_model_path, 'NT_50M')
-    elif config.extract_llmr.model._name_ == "DnaBert2ForClassifier":
-        config.ml_predict.train.trained_model_path = os.path.join(config.ml_predict.train.trained_model_path, 'DNABERT2_117M')
     elif config.extract_llmr.model._name_ == "EvoForClassifier":
         config.ml_predict.train.trained_model_path = os.path.join(config.ml_predict.train.trained_model_path, 'EVO_7B')
     else:

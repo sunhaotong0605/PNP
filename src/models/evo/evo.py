@@ -55,7 +55,7 @@ class EvoEmbedding(BaseEmbedding):
                 f'Invalid model name {model_name}. Should be one of: '
                 f'{", ".join(MODEL_NAMES)}.'
             )
-        logger.info(f"Config path: {config_path}")
+        # logger.info(f"Config path: {config_path}")
 
         # Load model.
         self.base_model = self.load_checkpoint(
@@ -63,11 +63,11 @@ class EvoEmbedding(BaseEmbedding):
             config_path=config_path,
             device=device
         )
-        logger.info(f"load model weight from: {pretrained_model_name_or_path}")
+        # logger.info(f"load model weight from: {pretrained_model_name_or_path}")
         self.base_embed = self.base_model.unembed.unembed
         self.dtype = self.base_model.unembed.weight.dtype
         self.config: PretrainedConfig = PretrainedConfig(**self.base_model.config)
-        print(self.base_model)
+        # print(self.base_model)
 
     def forward(
             self,
@@ -171,7 +171,7 @@ class EvoEmbedding(BaseEmbedding):
         model.to_bfloat16_except_poles_residues()
         if device is not None:
             model = model.to(device)
-        print(model)
+        # print(model)
         return model
 
 

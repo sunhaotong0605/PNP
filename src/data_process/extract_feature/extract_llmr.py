@@ -22,7 +22,7 @@ def extract_llmr(config: DictConfig):
     set_seed(config.extract_llmr.train.seed)
 
     model = utils.config.instantiate(registry.model, config.extract_llmr.model)
-    logger.info(model)
+    # logger.info(model)
 
     # Load the tokenizer and dataset
     dataset = utils.config.instantiate(registry.dataset, config.extract_llmr.dataset, partial=True)
@@ -57,12 +57,6 @@ def extract_llmr(config: DictConfig):
     if config.extract_llmr.train.resume_from_checkpoint is not None:
         checkpoint = config.extract_llmr.train.resume_from_checkpoint
         
-
-    logger.info(f"load checkpoint from {checkpoint}")
-    if checkpoint is not None:
-        trainer._load_from_checkpoint(checkpoint)
-        logger.info(f'load checkpoint from {checkpoint=} ')
- 
     
     # Prediction
     with torch.no_grad():
@@ -70,11 +64,11 @@ def extract_llmr(config: DictConfig):
         if config.extract_llmr.dataset.test_split is not None and config.extract_llmr.train.do_predict:
             test_dataset_path = os.path.join(config.extract_llmr.dataset.dest_path, config.extract_llmr.dataset.dataset_name)
             assert os.path.exists(test_dataset_path), f"test dataset not found: {test_dataset_path}"
-            logger.info(f"start predict from: {test_dataset_path}")
+            # logger.info(f"start predict from: {test_dataset_path}")
             test_splits = glob.glob(os.path.join(test_dataset_path, config.extract_llmr.dataset.test_split + ".txt"))
             test_splits = [os.path.basename(name).split(".txt")[0] for name in test_splits if ".txt" in name]
 
-            logger.info(f"predict data nums: {len(test_splits)}, which including:\n{test_splits}")
+            # logger.info(f"predict data nums: {len(test_splits)}, which including:\n{test_splits}")
 
 
             pickles_dir = os.path.join(config.extract_llmr.train.output_dir, "pickles")
@@ -115,12 +109,12 @@ def extract_llmr(config: DictConfig):
                 }
                 with open(output_pkl_path, "wb") as f:
                     pickle.dump(predict_result, f)
-                logger.info(f"predict pkl result: {output_pkl_path}")
+                # logger.info(f"predict pkl result: {output_pkl_path}")
         else:
             logger.info(f"not valid data split name: {config.dataset.test_split}")
         
-        logger.info("Max GPU memory allocated:", torch.cuda.max_memory_allocated() / (1024 * 1024), "MB")
-        logger.info("Finished!")
+        # logger.info("Max GPU memory allocated:", torch.cuda.max_memory_allocated() / (1024 * 1024), "MB")
+        # logger.info("Finished!")
 
 
 @hydra.main(config_path="configs", config_name="config.yaml", version_base=None)
@@ -130,21 +124,11 @@ def main(config: OmegaConf):
     # set wandb_mode disabled
     os.environ["WANDB_MODE"] = "disabled"
 
-    if config.extract_llmr.dataset.pkl_path is None:
-        raise ValueError("The 'pkl_path' parameter in 'extract_llmr.dataset' config must be specified.")
-    if config.extract_llmr.dataset.dest_path is None:
-        output_dir = os.path.join(os.path.dirname(config.cut_seq.data_path.rstrip("/")))
-        config.extract_llmr.dataset.dest_path = os.path.join(output_dir, "Temp", 'Task')
-    if config.cut_seq.output_dir is None:
-        output_dir = os.path.join(os.path.dirname(config.cut_seq.data_path.rstrip("/")))
-        config.extract_llmr.train.output_dir = os.path.join(output_dir, f"LLM_Representation/{config.extract_llmr.train.run_name}")
-        config.extract_llmr.train.logging_dir = os.path.join(output_dir, f"LLM_Representation/{config.extract_llmr.train.run_name}/logs")
     os.makedirs(config.extract_llmr.dataset.dest_path, exist_ok=True)
     os.makedirs(config.extract_llmr.train.output_dir, exist_ok=True)
     os.makedirs(config.extract_llmr.train.logging_dir, exist_ok=True)
     # print_config(config, resolve=True, save_dir=config.extract_llmr.train.logging_dir, prefix="extract_llmr")
     
-
     pbt_dp = ProbioticsDataProcess()
     short_genomes = pbt_dp.probiotics_check_sample_len(
         data_path=config.cut_seq.data_path,

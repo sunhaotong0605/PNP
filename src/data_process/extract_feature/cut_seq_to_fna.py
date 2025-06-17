@@ -56,7 +56,7 @@ def cut_seq_to_fna(config: DictConfig):
     for future in tqdm.tqdm(as_completed(futures), total=len(futures)):
         future.result()
 
-    print(f'Cut sequences to fna saved to {config.cut_seq_to_fna.output_path}')
+    # print(f'Cut sequences to fna saved to {config.cut_seq_to_fna.output_path}')
 
 
 @hydra.main(config_path="configs", config_name="config.yaml", version_base=None)
@@ -65,14 +65,13 @@ def main(config: OmegaConf):
     config = process_config(config)
     
     if config.cut_seq_to_fna.data_path is None:
-        raise ValueError("The 'data_path' parameter in 'cut_seq_to_fna' config must be specified.")
+        raise ValueError("The 'input_path' parameter in config must be specified.")
     if config.cut_seq_to_fna.output_dir is None:
-        config.cut_seq_to_fna.output_dir = os.path.join(os.path.dirname(config.cut_seq_to_fna.data_path.rstrip("/")))
-        config.cut_seq_to_fna.output_path = os.path.join(config.cut_seq_to_fna.output_dir, 'Temp', "Raw_Split")
-    
+        raise ValueError("The 'output_path' parameter in config must be specified.")
+
     # if finished, skip
     if os.path.exists(config.cut_seq_to_fna.output_path) and len(os.listdir(config.cut_seq_to_fna.output_path)) > 1:
-        logger.info("The 'cut_seq_to_fna' process has already been completed, skipping...")
+        # logger.info("The 'cut_seq_to_fna' process has already been completed, skipping...")
         return
     
     os.makedirs(config.cut_seq_to_fna.output_path, exist_ok=True)

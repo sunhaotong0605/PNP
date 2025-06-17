@@ -36,9 +36,9 @@ def print_config(
             branch_content = OmegaConf.to_yaml(config_section, resolve=resolve)
 
         branch.add(rich.syntax.Syntax(branch_content, "yaml"))
-    if is_main_process:
-        rich.print(tree)
-        # logger.info(OmegaConf.to_yaml(config, resolve=True))
+    # if is_main_process:
+    #     rich.print(tree)
+    #     logger.info(OmegaConf.to_yaml(config, resolve=True))
 
     if os.path.exists(save_dir):
         config_name = "_".join([prefix, "config_tree.txt"])

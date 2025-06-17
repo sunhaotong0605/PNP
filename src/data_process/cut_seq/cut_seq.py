@@ -9,7 +9,7 @@ from omegaconf import DictConfig, OmegaConf
 from Bio import SeqIO
 
 from src.utils.train import print_config, process_config
-from src.self_logger import logger, init_logger
+from src.self_logger import logger, init_logger 
 
 
 def cut_sequence(sequence, cut_length, overlap_ratio):
@@ -65,7 +65,7 @@ def cut_seq(config: DictConfig):
         for future in tqdm.tqdm(as_completed(futures), total=len(futures)):
             future.result()
 
-    print(f'Cut sequences saved to {config.cut_seq.output_path}')
+    # print(f'Cut sequences saved to {config.cut_seq.output_path}')
 
 
 @hydra.main(config_path="configs", config_name="config.yaml", version_base=None)
@@ -74,14 +74,13 @@ def main(config: OmegaConf):
     config = process_config(config)
     
     if config.cut_seq.data_path is None:
-        raise ValueError("The 'data_path' parameter in 'cut_seq' config must be specified.")
+        raise ValueError("The 'input_path' parameter in config must be specified.")
     if config.cut_seq.output_dir is None:
-        config.cut_seq.output_dir = os.path.dirname(config.cut_seq.data_path.rstrip("/"))
-        config.cut_seq.output_path = os.path.join(config.cut_seq.output_dir, "Preprocessing_Split")
+        raise ValueError("The 'output_path' parameter in config must be specified.")
 
     # if finished, skip
     if os.path.exists(config.cut_seq.output_path) and len(os.listdir(config.cut_seq.output_path)) > 1:
-        logger.info("The 'cut_seq' process has already been completed, skipping...")
+        logger.info("The 'sequence segmentation' process has already been completed, skipping...")
         return
     
     os.makedirs(config.cut_seq.output_path, exist_ok=True)
@@ -91,7 +90,7 @@ def main(config: OmegaConf):
     init_logger(svr_name="cut_seq", log_path=os.path.join(config.cut_seq.output_path, 'logs'))
     # logger.info("Start cutting seq...")
     cut_seq(config)
-    logger.info("Sequence cut completed​​")
+    logger.info("Sequence segmentation completed​​​")
 
 
 if __name__ == '__main__':

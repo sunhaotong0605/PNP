@@ -183,7 +183,6 @@ class ProbioticTestDataset(Dataset):
         super().__init__()
         with open(data_path, 'r') as file:
             self.sequences = [x.rstrip() for x in file.readlines()]
-        print("ok")
 
     def __len__(self):
         return len(self.sequences)

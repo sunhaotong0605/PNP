@@ -54,6 +54,21 @@ class EnhanceRepresentation(PreTrainedModel):
             other_omic_size=cross_attention_other_omic_size
         )
 
+        class MLPHead(nn.Module):
+            def __init__(self, input_dim=132, num_classes=2):
+                super().__init__()
+                self.classifier = nn.Sequential(
+                    nn.Linear(input_dim, 64),
+                    nn.ReLU(),
+                    nn.Linear(64, num_classes)
+                )
+                self.decoder = nn.Linear(input_dim, 132)
+            def forward(self, x):
+                logits = self.classifier(x)
+                recon = self.decoder(x)
+                return logits, recon
+        self.mlp_head = MLPHead(input_dim=132, num_classes=num_classes)
+
     def forward(
             self,
             labels,

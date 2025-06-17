@@ -536,11 +536,11 @@ class ProbioticsDataProcess:
         if sample_num != -1:
             random.shuffle(file_dirs)
             count = 0
-        logger.info(f"find {len(file_dirs)} samples")
+        # logger.info(f"find {len(file_dirs)} samples")
         for file_dir in tqdm.tqdm(file_dirs):
             # filter sample by sample length
             if os.path.basename(file_dir) in short_genomes or os.path.basename(file_dir) == "logs":
-                print(f"skip {file_dir}")
+                # print(f"skip {file_dir}")
                 continue
             pkl_path = glob.glob(os.path.join(f"{file_dir}", "*.pkl"))
             # filter sample by orf nums
@@ -757,7 +757,7 @@ class ProbioticsDataProcess:
         with open(dir+'/pickles.txt', "w") as f:
             for path in glob.glob(f"{dir}/pickles/*.pkl"):
                 f.write(path + "\n")
-        logger.info(f"All results saved in {dir+'/pickles.txt'}")
+        # logger.info(f"All results saved in {dir+'/pickles.txt'}")
     
     def probiotics_get_all_txt(
             self,
@@ -766,7 +766,7 @@ class ProbioticsDataProcess:
         with open(pkl_path + '/all.txt', "w") as f:
             for path in glob.glob(f"{pkl_path}/*.pkl"):
                 f.write(path + "\n")
-        logger.info(f"All results saved in {pkl_path}/all.txt")
+        # logger.info(f"All results saved in {pkl_path}/all.txt")
 
 
 if __name__ == '__main__':
