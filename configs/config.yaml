@@ -15,7 +15,7 @@ output_path: null
 cut_seq:
   data_path: ${input_path}
   output_dir: ${output_path}
-  output_path: ${output_path}/Preprocessing_Split
+  output_path: ${output_path}/Sequence_segments
   split_length: 1000
   overlap_ratio: 0.2
 cut_seq_to_fna:
@@ -27,7 +27,7 @@ cut_seq_to_fna:
 extract_ef:
   data_path: ${cut_seq_to_fna.output_path}
   output_dir: ${cut_seq.output_dir}
-  output_path: ${cut_seq.output_dir}/Engineered_Features
+  output_path: ${cut_seq.output_dir}/Engineered_features
   k: [3]
 extract_llmr:
   dataset:
@@ -48,8 +48,8 @@ extract_llmr:
     gradient_accumulation_steps: 1
     max_steps: -1
     seed: 42
-    output_dir: ${cut_seq.output_dir}/LLM_Representation/${extract_llmr.model._name_}
-    logging_dir: ${cut_seq.output_dir}/LLM_Representation/${extract_llmr.model._name_}/logs
+    output_dir: ${cut_seq.output_dir}/Foundation_model_representations/${extract_llmr.model._name_}
+    logging_dir: ${cut_seq.output_dir}/Foundation_model_representations/${extract_llmr.model._name_}/logs
     run_name: ${extract_llmr.model._name_}
     do_train: true
     do_eval: true
@@ -74,8 +74,8 @@ extract_llmr:
 enhance_rep:
     dataset:
       _name_: ProbioticEnhanceRepresentationDataset
-      llm_rep_path: ${cut_seq.output_dir}/LLM_Representation/${extract_llmr.model._name_}
-      ef_path: ${cut_seq.output_dir}/Engineered_Features
+      llm_rep_path: ${cut_seq.output_dir}/Foundation_model_representations/${extract_llmr.model._name_}
+      ef_path: ${cut_seq.output_dir}/Engineered_features
       train_split: train
       val_split: val
       test_split: pickles
@@ -91,8 +91,8 @@ enhance_rep:
       gradient_accumulation_steps: 1
       max_steps: -1
       seed: 42
-      output_dir: ${cut_seq.output_dir}/Enhanced_Representation/${extract_llmr.model._name_}
-      logging_dir: ${cut_seq.output_dir}/Enhanced_Representation/${extract_llmr.model._name_}/logs
+      output_dir: ${cut_seq.output_dir}/Enhanced_representations/${extract_llmr.model._name_}
+      logging_dir: ${cut_seq.output_dir}/Enhanced_representations/${extract_llmr.model._name_}/logs
       run_name: ${enhance_rep.model._name_}
       do_train: true
       do_eval: true
@@ -130,7 +130,7 @@ ml_predict:
     svc_max_iter: -1
   dataset:
     name: ProbioticDataset
-    dest_path: ${cut_seq.output_dir}/Enhanced_Representation/${extract_llmr.model._name_}
+    dest_path: ${cut_seq.output_dir}/Enhanced_representations/${extract_llmr.model._name_}
     dataset_name: ''
     train_split: null
     val_split: null
@@ -142,8 +142,8 @@ ml_predict:
     do_train: true
     do_eval: true
     do_predict: true
-    output_dir: ${cut_seq.output_dir}/Ml_Predict_Task/${extract_llmr.model._name_}
-    logging_dir: ${cut_seq.output_dir}/Ml_Predict_Task/${extract_llmr.model._name_}/logs
+    output_dir: ${cut_seq.output_dir}/Prediction_results/${extract_llmr.model._name_}
+    logging_dir: ${cut_seq.output_dir}/Prediction_results/${extract_llmr.model._name_}/logs
     resume_from_checkpoint: null
     overwrite_output_dir: false
     save_model: true
