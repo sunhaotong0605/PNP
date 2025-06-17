@@ -50,10 +50,15 @@ The input path can contain one or multiple FASTA files (samples).
 For each sample, the output contains
 
 ├── Sequence_segments: sequence segments
+
 ├── Engineered_features: engineered features (.pkl)
+
 ├── Foundation_model_representations: foundation model representations (.pkl)
+
 ├── Enhanced_representations: enhanced representations (.pkl)
+
 ├── Prediction_results: predicted labels and confidence scores (.txt)
+
 └── Temp: other required files
 
 If a sample's sequence has been segmented, i.e., the Sequence_segments folder has been existed in the output path, sequence segmentation step will be skipped, and existing sequence segments are directly used for prediction. 
