@@ -26,15 +26,16 @@ git clone https://github.com/sunhaotong0605/SPP_FMRESAC.git
 cd SPP_FMRESAC
 pip install -r requirements.txt
 ```
+
 ## Usage
 #### Foundation model weights.
 Download the weights of [Nucleotide Transformer-50M](https://huggingface.co/InstaDeepAI/nucleotide-transformer-v2-50m-multi-species) to the model_weights/NT_50M/ folder.
 
 Download the weights of [EVO-7B](https://huggingface.co/togethercomputer/evo-1-8k-base) to the model_weights/EVO_7B/ folder.
 
-#### Prediction for multiple samples.
+#### Prediction for target samples.
 ```bash
-python main_m.py model_name=xxx input_path=xxx output_path=xxx
+python main.py model_name=xxx input_path=xxx output_path=xxx
 ```
 --model_name: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
 
@@ -42,35 +43,20 @@ python main_m.py model_name=xxx input_path=xxx output_path=xxx
 
 --output_path: A path for outputting files.
 
-Example: python main_m.py model_name=NT_50M input_path=/home/sample/input_path/ output_path=/home/result/
+Example: python main.py model_name=NT_50M input_path=/home/sample/input_path/ output_path=/home/result/
 
-The input path can contain one or multiple FASTA files (samples). For each sample, the output contains: sequence segments, foundation model representations (.pkl), engineered features (.pkl), enhanced representations (.pkl), and predicted labels and confidence scores (.txt).
+The input path can contain one or multiple FASTA files (samples).
 
-#### Prediction for a sample after sequence segmentation.
-```bash
-python main_o.py model_name=xxx segment_path=xxx output_path=xxx
-```
+For each sample, the output contains
+├── Sequence_segments: sequence segments
+├── Engineered_features: engineered features (.pkl)
+├── Foundation_model_representations: foundation model representations (.pkl)
+├── Enhanced_representations: enhanced representations (.pkl)
+├── Prediction_results: predicted labels and confidence scores (.txt)
+└── Temp: other required files
 
---model_name: A selected foundation model for generating representations, and the candidates only can be "NT_50M" or "EVO_7B".
+If a sample's sequence has been segmented, i.e., the Sequence_segments folder has been existed in the output path, sequence segmentation step will be skipped, and existing sequence segments are directly used for prediction. 
 
---segment_path: A path of sequence segments.
-
---output_path: A path for outputting files.
-
-Example: python main_o.py model_name=EVO_7B segment_path=/home/sample/segment_path/ output_path=/home/result/
-
-If a sample's sequence has been segmented, sequence segmentation step can be skipped, and existing sequence segments can be directly used for prediction. This script does not support multi-sample prediction. An output folder named after the sample is generated, containing: foundation model representations (.pkl), engineered features (.pkl), enhanced representations (.pkl), and predicted label and confidence score (txt).
-其实我在代码里做了检测，如果输出路径下已经存在切割片段、人工特征，就会跳过这些步骤。也就是说在运行第二个大模型的时候，不会再重新切割了。
-输出的格式为
-```
-output_path
-├── Preprocessing_Split 切割片段
-├── Engineered_Features 人工特征
-├── LLM_Representation 大模型表征
-├── Enhanced_Representation 增强表征
-├── Ml_Predict_Task 机器学习分类器预测结果
-└── Temp 中间数据
-```
 #### notice
 Each prediction involves randomly selecting partial segments from a sample, may result in inconsistent outputs across multiple runs due to differences in the selected segments sets.
 
