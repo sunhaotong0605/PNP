@@ -45,9 +45,7 @@ python main.py model_name=xxx input_path=xxx output_path=xxx
 
 Example: python main.py model_name=NT_50M input_path=/home/sample/input_path/ output_path=/home/result/
 
-The input path can contain one or multiple FASTA files (samples).
-
-For each sample, the output contains
+The input path can contain one or multiple FASTA files (samples). For each sample, the output contains
 
 ├── Sequence_segments: sequence segments
 
