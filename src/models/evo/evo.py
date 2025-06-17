@@ -11,9 +11,9 @@ from stripedhyena.utils import dotdict
 from stripedhyena.model import StripedHyena
 from transformers.modeling_outputs import SequenceClassifierOutput, BaseModelOutputWithPastAndCrossAttentions
 
-from ...self_logger import logger
-from ...dataloaders.datasets.evo_tokenizer import EvoCharLevelTokenizer
-from ..base_model import BaseEmbedding, BaseLoraForClassifier, BaseForClassifier
+from src.self_logger import logger
+from src.models.evo.evo_tokenizer import EvoCharLevelTokenizer
+from src.models.base_model import BaseEmbedding, BaseLoraForClassifier, BaseForClassifier
 
 MODEL_NAMES = ['evo-1-8k-base', 'evo-1-131k-base']
 

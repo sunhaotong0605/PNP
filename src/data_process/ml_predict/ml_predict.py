@@ -62,12 +62,12 @@ def ml_predict(config: DictConfig):
         for sample_idx in range(test_predict.shape[1]):
             sample_predictions = test_predict[:, sample_idx]
             if np.sum(sample_predictions == 0) > 5:
-                sample_labels.append(0)
+                sample_labels.append('Non-probiotics')
             else:
-                sample_labels.append(1)
+                sample_labels.append('Probiotics')
             sample_probability = test_prob[:, sample_idx, :]
             average_probability = np.mean(sample_probability, axis=0)
-            if sample_labels[-1] == 0:
+            if sample_labels[-1] == 'Non-probiotics':
                 sample_prob.append(average_probability[0])
             else:
                 sample_prob.append(average_probability[1])
@@ -90,11 +90,20 @@ def main(config: OmegaConf):
     os.makedirs(config.ml_predict.dataset.dest_path, exist_ok=True)
     os.makedirs(config.ml_predict.train.output_dir, exist_ok=True)
     os.makedirs(config.ml_predict.train.logging_dir, exist_ok=True)
-    print_config(config, resolve=True, save_dir=config.enhance_rep.train.logging_dir, prefix="ml_predict")
+    if config.extract_llmr.model._name_ == "NTForClassifier":
+        config.ml_predict.train.trained_model_path = os.path.join(config.ml_predict.train.trained_model_path, 'NT_50M')
+    elif config.extract_llmr.model._name_ == "DnaBert2ForClassifier":
+        config.ml_predict.train.trained_model_path = os.path.join(config.ml_predict.train.trained_model_path, 'DNABERT2_117M')
+    elif config.extract_llmr.model._name_ == "EvoForClassifier":
+        config.ml_predict.train.trained_model_path = os.path.join(config.ml_predict.train.trained_model_path, 'EVO_7B')
+    else:
+        raise ValueError(f"Unknown model name: {config.extract_llmr.model._name_}")
+    # print_config(config, resolve=True, save_dir=config.enhance_rep.train.logging_dir, prefix="ml_predict")
    
     init_logger(svr_name="ml_predict", log_path=config.enhance_rep.train.logging_dir)
-    logger.info("start ml_predict...")
+    # logger.info("start ml_predict...")
     ml_predict(config)
+    logger.info("Prediction completed")
 
 if __name__ == '__main__':
     main()

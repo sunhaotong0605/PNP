@@ -78,13 +78,20 @@ def main(config: OmegaConf):
     if config.cut_seq.output_dir is None:
         config.cut_seq.output_dir = os.path.dirname(config.cut_seq.data_path.rstrip("/"))
         config.cut_seq.output_path = os.path.join(config.cut_seq.output_dir, "Preprocessing_Split")
+
+    # if finished, skip
+    if os.path.exists(config.cut_seq.output_path) and len(os.listdir(config.cut_seq.output_path)) > 1:
+        logger.info("The 'cut_seq' process has already been completed, skipping...")
+        return
+    
     os.makedirs(config.cut_seq.output_path, exist_ok=True)
     print_config(config, resolve=True, save_dir=os.path.join(config.cut_seq.output_path, 'logs'), prefix="cut_seq")
 
     # init logger
     init_logger(svr_name="cut_seq", log_path=os.path.join(config.cut_seq.output_path, 'logs'))
-    logger.info("start cut seq...")
+    # logger.info("Start cutting seq...")
     cut_seq(config)
+    logger.info("Sequence cut completed​​")
 
 
 if __name__ == '__main__':

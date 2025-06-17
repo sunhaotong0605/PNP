@@ -68,14 +68,21 @@ def main(config: OmegaConf):
         raise ValueError("The 'data_path' parameter in 'cut_seq_to_fna' config must be specified.")
     if config.cut_seq_to_fna.output_dir is None:
         config.cut_seq_to_fna.output_dir = os.path.join(os.path.dirname(config.cut_seq_to_fna.data_path.rstrip("/")))
-        config.cut_seq_to_fna.output_path = os.path.join(config.cut_seq_to_fna.output_dir, "Raw_Split")
+        config.cut_seq_to_fna.output_path = os.path.join(config.cut_seq_to_fna.output_dir, 'Temp', "Raw_Split")
+    
+    # if finished, skip
+    if os.path.exists(config.cut_seq_to_fna.output_path) and len(os.listdir(config.cut_seq_to_fna.output_path)) > 1:
+        logger.info("The 'cut_seq_to_fna' process has already been completed, skipping...")
+        return
+    
     os.makedirs(config.cut_seq_to_fna.output_path, exist_ok=True)
-    print_config(config, resolve=True, save_dir=os.path.join(config.cut_seq_to_fna.output_path, 'logs'), prefix="cut_seq_to_fna")
+    # print_config(config, resolve=True, save_dir=os.path.join(config.cut_seq_to_fna.output_path, 'logs'), prefix="cut_seq_to_fna")
 
     # init logger
     init_logger(svr_name="cut_seq_to_fna", log_path=os.path.join(config.cut_seq_to_fna.output_path, 'logs'))
-    logger.info("start cut seq to fna...")
+    # logger.info("start cut seq to fna...")
     cut_seq_to_fna(config)
+    # logger.info("cut seq to fna finished!")
 
 
 if __name__ == '__main__':

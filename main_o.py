@@ -12,12 +12,12 @@ from src.data_process.extract_feature import extract_llmr
 from src.data_process.enhance_rep import enhance_rep
 from src.data_process.ml_predict import ml_predict
 
-@hydra.main(config_path="configs", config_name="config.yaml", version_base=None)
+@hydra.main(config_path="configs", config_name="config_segment.yaml", version_base=None)
 def main(config: OmegaConf):
     # if config.run_cut_seq:
     #     cut_seq.main(config)
-    if config.run_cut_seq_to_fna:
-        cut_seq_to_fna.main(config)
+    # if config.run_cut_seq_to_fna:
+    #     cut_seq_to_fna.main(config)
     if config.run_extract_ef:
         extract_ef.main(config)
     if config.run_extract_llmr:

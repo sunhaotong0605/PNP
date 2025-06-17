@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - experiment: NT_50M.yaml
+  - model_name: NT_50M.yaml
 
 run_cut_seq: true
 run_cut_seq_to_fna: true
@@ -9,28 +9,31 @@ run_extract_llmr: true
 run_enhance_rep: true
 run_ml_predict: true
 
+input_path: null
+output_path: null
+
 cut_seq:
-  data_path: /home/share/huadjyin/home/s_kangqiang/04_test_output/Raw_Sequence/
-  output_dir: null
-  output_path: ${cut_seq.output_dir}/Preprocessing_Split
+  data_path: ${input_path}
+  output_dir: ${output_path}
+  output_path: ${output_path}/Preprocessing_Split
   split_length: 1000
   overlap_ratio: 0.2
 cut_seq_to_fna:
-  data_path: /home/share/huadjyin/home/s_kangqiang/04_test_output/Raw_Sequence/
-  output_dir: null
-  output_path: ${cut_seq.output_dir}/Raw_Split
+  data_path: ${input_path}
+  output_dir: ${cut_seq.output_dir}
+  output_path: ${cut_seq.output_dir}/Temp/Raw_Split
   split_length: 1000
   overlap_ratio: 0.2
 extract_ef:
   data_path: ${cut_seq_to_fna.output_path}
-  output_dir: null
+  output_dir: ${cut_seq.output_dir}
   output_path: ${cut_seq.output_dir}/Engineered_Features
   k: [3]
 extract_llmr:
   dataset:
     _name_: ProbioticDataset
     pkl_path: ${cut_seq.output_path}
-    dest_path: null
+    dest_path: ${cut_seq.output_dir}/Temp/Task
     train_split: train
     val_split: val
     test_split: test
@@ -45,8 +48,8 @@ extract_llmr:
     gradient_accumulation_steps: 1
     max_steps: -1
     seed: 42
-    output_dir: ${cut_seq.output_dir}/Output/Extract_Llmr_Task/${extract_llmr.model._name_}
-    logging_dir: ${cut_seq.output_dir}/Output/Extract_Llmr_Task/${extract_llmr.model._name_}/logs
+    output_dir: ${cut_seq.output_dir}/LLM_Representation/${extract_llmr.model._name_}
+    logging_dir: ${cut_seq.output_dir}/LLM_Representation/${extract_llmr.model._name_}/logs
     run_name: ${extract_llmr.model._name_}
     do_train: true
     do_eval: true
@@ -71,7 +74,7 @@ extract_llmr:
 enhance_rep:
     dataset:
       _name_: ProbioticEnhanceRepresentationDataset
-      llm_rep_path: ${cut_seq.output_dir}/Output/Extract_Llmr_Task/${extract_llmr.model._name_}
+      llm_rep_path: ${cut_seq.output_dir}/LLM_Representation/${extract_llmr.model._name_}
       ef_path: ${cut_seq.output_dir}/Engineered_Features
       train_split: train
       val_split: val
@@ -88,8 +91,8 @@ enhance_rep:
       gradient_accumulation_steps: 1
       max_steps: -1
       seed: 42
-      output_dir: ${cut_seq.output_dir}/Output/Enhance_Rep_Task/${extract_llmr.model._name_}
-      logging_dir: ${cut_seq.output_dir}/Output/Enhance_Rep_Task/${extract_llmr.model._name_}/logs
+      output_dir: ${cut_seq.output_dir}/Enhanced_Representation/${extract_llmr.model._name_}
+      logging_dir: ${cut_seq.output_dir}/Enhanced_Representation/${extract_llmr.model._name_}/logs
       run_name: ${enhance_rep.model._name_}
       do_train: true
       do_eval: true
@@ -102,11 +105,11 @@ enhance_rep:
       metric_for_best_model: loss
       overwrite_output_dir: false
       save_safetensors: true
-      resume_from_checkpoint: null
+      resume_from_checkpoint: model_weights/Cross_Attention/
       warmup_steps: 100
     model:
       _name_: EnhanceRepresentation
-      pretrained_model_name_or_path: model_weigthts/
+      pretrained_model_name_or_path: null
       num_classes: 2
       hidden_size: null
       freeze_embedding: true
@@ -127,7 +130,7 @@ ml_predict:
     svc_max_iter: -1
   dataset:
     name: ProbioticDataset
-    dest_path: ${cut_seq.output_dir}/Output/Enhance_Rep_Task/${extract_llmr.model._name_}
+    dest_path: ${cut_seq.output_dir}/Enhanced_Representation/${extract_llmr.model._name_}
     dataset_name: ''
     train_split: null
     val_split: null
@@ -139,9 +142,9 @@ ml_predict:
     do_train: true
     do_eval: true
     do_predict: true
-    output_dir: ${cut_seq.output_dir}/Output/Ml_Predict_Task/${extract_llmr.model._name_}
-    logging_dir: ${cut_seq.output_dir}/Output/Ml_Predict_Task/${extract_llmr.model._name_}/logs
+    output_dir: ${cut_seq.output_dir}/Ml_Predict_Task/${extract_llmr.model._name_}
+    logging_dir: ${cut_seq.output_dir}/Ml_Predict_Task/${extract_llmr.model._name_}/logs
     resume_from_checkpoint: null
     overwrite_output_dir: false
     save_model: true
-    trained_model_path: model_weights/Machine_Learning/NT_50M
+    trained_model_path: model_weights/Machine_Learning/

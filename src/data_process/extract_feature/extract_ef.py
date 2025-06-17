@@ -108,18 +108,24 @@ def main(config: OmegaConf):
     if config.extract_ef.output_dir is None:
         config.extract_ef.output_dir = os.path.dirname(config.extract_ef.data_path.rstrip("/"))
         config.extract_ef.output_path = os.path.join(config.extract_ef.output_dir, "Engineered_Features")
+    
+    # if finished, skip
+    if os.path.exists(config.extract_ef.output_path) and len(os.listdir(config.extract_ef.output_path)) > 1:
+        logger.info("The 'extract_ef' process has already been completed, skipping...")
+        return
+    
     os.makedirs(config.extract_ef.output_path, exist_ok=True)
-    print_config(config, resolve=True, save_dir=os.path.join(config.extract_ef.output_path, 'logs'), prefix="extract_ef")
+    # print_config(config, resolve=True, save_dir=os.path.join(config.extract_ef.output_path, 'logs'), prefix="extract_ef")
 
     # init logger
     init_logger(svr_name="extract_ef", log_path=os.path.join(config.extract_ef.output_path, 'logs'))
-    logger.info("start extract_ef...")
+    # logger.info("start extract_ef...")
     extract_ef(config)
 
 
     pbt_dp = ProbioticsDataProcess()
     pbt_dp.probiotics_get_all_txt(pkl_path=config.extract_ef.output_path)
-
+    logger.info("Engineered feature extraction completed")
 
 if __name__ == '__main__':
     main()

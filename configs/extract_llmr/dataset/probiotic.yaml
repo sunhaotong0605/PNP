@@ -1,5 +1,4 @@
 _name_: ProbioticDataset
-dest_path: null
 train_split: train
 val_split: val
 test_split: test

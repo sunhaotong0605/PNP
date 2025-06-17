@@ -5,6 +5,7 @@ import torch
 from peft import LoraConfig
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, PretrainedConfig, AutoModel
 from transformers.modeling_outputs import SequenceClassifierOutput, BaseModelOutputWithPastAndCrossAttentions
+from transformers.models.bert.configuration_bert import BertConfig
 
 
 from src.models.base_model import BaseEmbedding, BaseLoraForClassifier, BaseForClassifier, BaseForMultiTaskSequence
@@ -20,6 +21,14 @@ class DnaBert2Embedding(BaseEmbedding):
             trust_remote_code=True,
             # config=config
         )
+        # self.config: PretrainedConfig = BertConfig.from_pretrained(pretrained_model_name_or_path)
+        # base_model = AutoModelForSequenceClassification.from_pretrained(
+        #     pretrained_model_name_or_path=pretrained_model_name_or_path, 
+        #     device_map=device, 
+        #     trust_remote_code=True, 
+        #     config=self.config, 
+        #     ignore_mismatched_sizes=ignore_mismatched_sizes
+        # )
         base_model = AutoModelForSequenceClassification.from_pretrained(
             pretrained_model_name_or_path,
             device_map=device,
@@ -32,7 +41,6 @@ class DnaBert2Embedding(BaseEmbedding):
         self.classifier = base_model.classifier
         self.config: PretrainedConfig = base_model.config
         self.dtype = base_model.dtype
-        print('1')
 
     def forward(
             self,

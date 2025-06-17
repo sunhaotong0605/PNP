@@ -125,23 +125,29 @@ def main(config: OmegaConf):
 
     if config.cut_seq.output_dir is None:
         output_dir = os.path.join(os.path.dirname(config.cut_seq.data_path.rstrip("/")))
-        config.enhance_rep.dataset.llm_rep_path = os.path.join(output_dir, f"Output/Extract_Llmr_Task/{config.extract_llmr.model._name_}")
+        config.enhance_rep.dataset.llm_rep_path = os.path.join(output_dir, f"LLM_Representation/{config.extract_llmr.model._name_}")
         config.enhance_rep.dataset.ef_path = os.path.join(output_dir, f"Engineered_Features")
-        config.enhance_rep.train.output_dir = os.path.join(output_dir, f"Output/Enhance_Rep_Task/{config.extract_llmr.model._name_}")
-        config.enhance_rep.train.logging_dir = os.path.join(output_dir, f"Output/Enhance_Rep_Task/{config.extract_llmr.model._name_}/logs")
+        config.enhance_rep.train.output_dir = os.path.join(output_dir, f"Enhanced_Representation/{config.extract_llmr.model._name_}")
+        config.enhance_rep.train.logging_dir = os.path.join(output_dir, f"Enhanced_Representation/{config.extract_llmr.model._name_}/logs")
     os.makedirs(config.enhance_rep.dataset.llm_rep_path, exist_ok=True)
     os.makedirs(config.enhance_rep.dataset.ef_path, exist_ok=True)
     os.makedirs(config.enhance_rep.train.output_dir, exist_ok=True)
     os.makedirs(config.enhance_rep.train.logging_dir, exist_ok=True)
-    print_config(config, resolve=True, save_dir=config.enhance_rep.train.logging_dir, prefix="enhance_rep")
+    if config.extract_llmr.model._name_ == "NTForClassifier":
+        config.enhance_rep.train.resume_from_checkpoint = os.path.join(config.enhance_rep.train.resume_from_checkpoint, 'NT_50M')
+    elif config.extract_llmr.model._name_ == "EvoForClassifier":
+        config.enhance_rep.train.resume_from_checkpoint = os.path.join(config.enhance_rep.train.resume_from_checkpoint, 'EVO_7B')
+    else:
+        raise ValueError(f"Unknown model name: {config.extract_llmr.model._name_}")
+    # print_config(config, resolve=True, save_dir=config.enhance_rep.train.logging_dir, prefix="enhance_rep")
    
     init_logger(svr_name="enhance_rep", log_path=config.enhance_rep.train.logging_dir)
-    logger.info("start enhance_rep...")
+    # logger.info("start enhance_rep...")
     enhance_rep(config)
 
     pbt_dp = ProbioticsDataProcess()
     pbt_dp.probiotics_get_pickles_txt(dir=config.enhance_rep.train.output_dir)
-
+    logger.info("Representation enhancement completed")
 
 if __name__ == '__main__':
     main()

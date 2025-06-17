@@ -134,15 +134,15 @@ def main(config: OmegaConf):
         raise ValueError("The 'pkl_path' parameter in 'extract_llmr.dataset' config must be specified.")
     if config.extract_llmr.dataset.dest_path is None:
         output_dir = os.path.join(os.path.dirname(config.cut_seq.data_path.rstrip("/")))
-        config.extract_llmr.dataset.dest_path = os.path.join(output_dir, "Task")
+        config.extract_llmr.dataset.dest_path = os.path.join(output_dir, "Temp", 'Task')
     if config.cut_seq.output_dir is None:
         output_dir = os.path.join(os.path.dirname(config.cut_seq.data_path.rstrip("/")))
-        config.extract_llmr.train.output_dir = os.path.join(output_dir, f"Output/Extract_Llmr_Task/{config.extract_llmr.train.run_name}")
-        config.extract_llmr.train.logging_dir = os.path.join(output_dir, f"Output/Extract_Llmr_Task/{config.extract_llmr.train.run_name}/logs")
+        config.extract_llmr.train.output_dir = os.path.join(output_dir, f"LLM_Representation/{config.extract_llmr.train.run_name}")
+        config.extract_llmr.train.logging_dir = os.path.join(output_dir, f"LLM_Representation/{config.extract_llmr.train.run_name}/logs")
     os.makedirs(config.extract_llmr.dataset.dest_path, exist_ok=True)
     os.makedirs(config.extract_llmr.train.output_dir, exist_ok=True)
     os.makedirs(config.extract_llmr.train.logging_dir, exist_ok=True)
-    print_config(config, resolve=True, save_dir=config.extract_llmr.train.logging_dir, prefix="predict")
+    # print_config(config, resolve=True, save_dir=config.extract_llmr.train.logging_dir, prefix="extract_llmr")
     
 
     pbt_dp = ProbioticsDataProcess()
@@ -161,10 +161,11 @@ def main(config: OmegaConf):
     )
 
     init_logger(svr_name="extract_llmr", log_path=config.extract_llmr.train.logging_dir)
-    logger.info("start predict...")
+    # logger.info("start extract_llmr...")
     extract_llmr(config)
 
     pbt_dp.probiotics_get_pickles_txt(dir=config.extract_llmr.train.output_dir)
+    logger.info("Foundation model representation generation completed")
 
 if __name__ == '__main__':
     # torch.cuda.set_device(3)
