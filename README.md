@@ -45,19 +45,15 @@ python main.py model_name=xxx input_path=xxx output_path=xxx
 
 Example: python main.py model_name=NT_50M input_path=/home/sample/input_path/ output_path=/home/result/
 
+<pre>
 The input path can contain one or multiple FASTA files (samples). For each sample, the output contains
-
 ├── Sequence_segments: sequence segments
-
 ├── Engineered_features: engineered features (.pkl)
-
 ├── Foundation_model_representations: foundation model representations (.pkl)
-
 ├── Enhanced_representations: enhanced representations (.pkl)
-
 ├── Prediction_results: predicted labels and confidence scores (.txt)
-
 └── Temp: other required files
+</pre>
 
 If a sample's sequence has been segmented, i.e., the Sequence_segments folder has been existed in the output path, sequence segmentation step will be skipped, and existing sequence segments are directly used for prediction. 
 
