@@ -48,6 +48,7 @@ Example: python main.py model_name=NT_50M input_path=/home/sample/input_path/ ou
 The input path can contain one or multiple FASTA files (samples).
 
 For each sample, the output contains
+
 ├── Sequence_segments: sequence segments
 ├── Engineered_features: engineered features (.pkl)
 ├── Foundation_model_representations: foundation model representations (.pkl)
