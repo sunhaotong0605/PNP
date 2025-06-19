@@ -62,4 +62,4 @@ Each prediction involves randomly selecting partial segments from a sample, may 
 MIT License. See [LICENSE](LICENSE.txt) for details.
 
 ## Citation
-Kang Q, Sun H, Wang Y, et al. Prediction of soil probiotics based on foundation model representation enhancement and stacked aggregation classifier. bioRxiv. doi:
+Kang Q, Sun H, Wang Y, et al. Prediction of soil probiotics based on foundation model representation enhancement and stacked aggregation classifier. bioRxiv. doi:https://doi.org/10.1101/2025.06.13.659431.
